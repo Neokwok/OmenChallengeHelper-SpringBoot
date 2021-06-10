@@ -70,16 +70,22 @@ public class UserServiceImpl implements UserService {
                 System.out.println("");
                 log.info("当前执行任务：{} - {}%", en.get("eventName"), en.get("progress"));
                 int time;
-                try{
-                    time = 45;
-                }catch (NumberFormatException e){
-                    System.out.println("输入字符非法，使用45作为默认值");
-                    // 默认值
+                if(((String) en.get("eventName")).startsWith("Launch")){
+                    time = 1;
+                }else {
                     time = 45;
                 }
+//                try{
+//                    time = 45;
+//                }catch (NumberFormatException e){
+//                    System.out.println("输入字符非法，使用45作为默认值");
+//                    // 默认值
+//                    time = 45;
+//                }
                 Map<String, Object> result = challenge.doIt((String) en.get("eventName"), time);
                 if((int)result.get("progress") == (int)en.get("progress")){
-                    System.out.println("进度没有变化，你设置的时间不合理！(时间要小于等于当前时间减去上一次提交任务的时间)");
+                    System.out.println("任务已领取，进度未发生变化，当前任务设置时间为"+time
+                            +"分钟，请等待"+time+"分钟后重新执行程序！");
                 }
             });
 
@@ -87,7 +93,7 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        System.out.println("-------------------------end,所有账号HP任务执行完毕-----------------------");
+        System.out.println("-------------------------end,所有账号HP任务执行完毕，45分钟重新执行程序即可完成全部任务-----------------------");
 
 
 
