@@ -72,7 +72,7 @@ public class Login {
             HttpUtilEntity httpUtilEntity = httpUtil2.doGetEntity(url);
             String location = null;
             location = httpUtilEntity.getHeaders().get("location");
-            System.out.println("-----------正在打印location，出错请重新执行程序-----------");
+            log.info("-----------正在打印location，出错请重新执行程序-----------");
             System.out.println(location);
             if (!location.isEmpty()) {
                 Map<String, String> body = new HashMap<String, String>();
@@ -136,8 +136,8 @@ public class Login {
             HttpUtilEntity httpUtilEntity = httpUtil2.doStreamPost(loginAddr, JsonUtil.obj2String(data).getBytes(StandardCharsets.UTF_8), header);
             Map<String, String> result = JsonUtil.string2Obj(httpUtilEntity.getBody(), Map.class);
             if(!"success".equals(result.get("status"))){
-                System.out.println("登录失败~,请检查当前账号"+email+"密码"+pass+"相关信息是否正确");
-                System.out.println("---------------------程序即将退出----------------------");
+                log.info("登录失败~,请检查当前账号"+email+"密码"+pass+"相关信息是否正确");
+                log.info("---------------------程序即将退出----------------------");
                 log.info(httpUtilEntity.getBody());
                 System.exit(-1);
             }
