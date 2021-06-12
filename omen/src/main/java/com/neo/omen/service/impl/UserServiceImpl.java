@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService {
             String sessionToken;
             Login login = new Login(user.getEmail(),user.getPass());
             log.info("登录准备");
-            login.idpProvider();
             login.webPrepare();
+            login.idpProvider();
             String localhostUrl = login.webLogin();
             log.info("开始模拟Omen登录操作");
             String tokenInfo = login.clientLogin(localhostUrl);
