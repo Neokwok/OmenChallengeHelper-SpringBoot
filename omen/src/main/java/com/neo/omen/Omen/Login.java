@@ -31,6 +31,7 @@ public class Login {
 
     HttpUtil2 httpUtil2 = new HttpUtil2();
     private String backendCsrf;
+    private String baseUrl;
 
     public Login() {
     }
@@ -80,6 +81,7 @@ public class Login {
                 HttpUtilEntity temp = httpUtil2.doStreamPost(backendUrl, JsonUtil.obj2String(body).getBytes(StandardCharsets.UTF_8), header);
                 Map result = JsonUtil.string2Obj(temp.getBody(), Map.class);
                 backendCsrf = (String) result.get("csrfToken");
+                baseUrl = (String) result.get("regionEndpointUrl");
             }else {
                 System.out.println("----------------------");
             }
@@ -92,7 +94,8 @@ public class Login {
     }
 
     public void idpProvider(){
-        String url = "https://ui-backend.us-west-2.id.hp.com/bff/v1/session/check-username";
+        //String url = "https://ui-backend.us-west-2.id.hp.com/bff/v1/session/check-username";
+        String url = baseUrl + "/session/check-username";
         Map<String, String> data = new HashMap<String, String>(){{
             put("username", email);
         }};
@@ -123,7 +126,8 @@ public class Login {
     }
     public String webLogin(){
 
-        String loginAddr = "https://ui-backend.us-west-2.id.hp.com/bff/v1/session/username-password";
+        //String loginAddr = "https://ui-backend.us-west-2.id.hp.com/bff/v1/session/username-password";
+        String loginAddr = baseUrl + "/session/username-password";
         Map<String, String> data = new HashMap<String, String>(){{
             put("username", email + "@" + idpProvider);
             put("password", pass);
@@ -196,8 +200,10 @@ public class Login {
             HttpUtilEntity httpUtilEntity = httpUtil2.doStreamPost("https://rpc-prod.versussystems.com/rpc", JsonUtil.obj2String(handshakeBody).getBytes(StandardCharsets.UTF_8), new HashMap<String, String>() {{
                 put("Content-Type", "application/json;charset=utf-8");
             }});
+            //log.info("开始抓取sessionToken"+httpUtilEntity.getBody());
             Map resultMap = JsonUtil.string2Obj(httpUtilEntity.getBody(), Map.class);
             token = (String) ((Map<String, Object>) resultMap.get("result")).get("token");
+            log.info("当前sessionToken:"+token);
 
             // mobile.sessions.v2.start
             String[] split = authorization.split("\\.");
@@ -214,6 +220,8 @@ public class Login {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         return null;
